@@ -10,6 +10,8 @@ import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
+import static book.Constant.ZK_SERVER_ADD;
+
 // ZooKeeper API 更新节点数据内容，使用异步(async)接口。
 public class SetData_API_ASync_Usage implements Watcher {
 
@@ -19,13 +21,14 @@ public class SetData_API_ASync_Usage implements Watcher {
     public static void main(String[] args) throws Exception {
 
     	String path = "/zk-book";
-    	zk = new ZooKeeper("domain1.book.zookeeper:2181", 
+    	zk = new ZooKeeper(ZK_SERVER_ADD,
 				5000, //
 				new SetData_API_ASync_Usage());
     	connectedSemaphore.await();
 
-    	zk.create( path, "123".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL );
-    	zk.setData( path, "456".getBytes(), -1, new IStatCallback(), null );
+    	String pathCreate=zk.create( path, "123".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL );
+        System.out.println("pathCreate:::"+pathCreate);
+        zk.setData( path, "456".getBytes(), -1, new IStatCallback(), null );
     	
     	Thread.sleep( Integer.MAX_VALUE );
     }
@@ -39,7 +42,8 @@ public class SetData_API_ASync_Usage implements Watcher {
     }
 }
 class IStatCallback implements AsyncCallback.StatCallback{
-	public void processResult(int rc, String path, Object ctx, Stat stat) {
+	@Override
+    public void processResult(int rc, String path, Object ctx, Stat stat) {
         if (rc == 0) {
             System.out.println("SUCCESS");
         }

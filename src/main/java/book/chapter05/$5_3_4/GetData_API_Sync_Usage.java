@@ -36,7 +36,8 @@ public class GetData_API_Sync_Usage implements Watcher {
     }
     @Override
 	public void process(WatchedEvent event) {
-        if (KeeperState.SyncConnected == event.getState()) {
+		System.out.println("event    222222222222"+event);
+		if (KeeperState.SyncConnected == event.getState()) {
   	      if (EventType.None == event.getType() && null == event.getPath()) {
   	          connectedSemaphore.countDown();
   	      } else if (event.getType() == EventType.NodeDataChanged) {

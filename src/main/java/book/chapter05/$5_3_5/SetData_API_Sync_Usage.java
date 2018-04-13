@@ -11,6 +11,8 @@ import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
+import static book.Constant.ZK_SERVER_ADD;
+
 // ZooKeeper API 更新节点数据内容，使用同步(sync)接口。
 public class SetData_API_Sync_Usage implements Watcher {
 
@@ -20,24 +22,30 @@ public class SetData_API_Sync_Usage implements Watcher {
     public static void main(String[] args) throws Exception {
 
     	String path = "/zk-book";
-    	zk = new ZooKeeper("domain1.book.zookeeper:2181", 
+    	zk = new ZooKeeper(ZK_SERVER_ADD,
 				5000, //
 				new SetData_API_Sync_Usage());
     	connectedSemaphore.await();
     	
         zk.create( path, "123".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL );
         zk.getData( path, true, null );
-        
+        System.out.println("data:"+new String(zk.getData(path,false,null)));
         Stat stat = zk.setData( path, "456".getBytes(), -1 );
+        System.out.println("data:"+new String(zk.getData(path,false,null)));
         System.out.println(stat.getCzxid()+","+
 			        	   stat.getMzxid()+","+
 			        	   stat.getVersion());
-        Stat stat2 = zk.setData( path, "456".getBytes(), stat.getVersion() );
+        Stat stat2 = zk.setData( path, "789".getBytes(), stat.getVersion() );
+        System.out.println("data:"+new String(zk.getData(path,false,null)));
         System.out.println(stat2.getCzxid()+","+
 	        	   		   stat2.getMzxid()+","+
 	        	   		   stat2.getVersion());
+
         try {
-			zk.setData( path, "456".getBytes(), stat.getVersion() );
+            Stat stat3=zk.setData( path, "456".getBytes(), stat.getVersion() );
+            System.out.println(stat3.getCzxid()+","+
+                    stat3.getMzxid()+","+
+                    stat3.getVersion());
 		} catch ( KeeperException e ) {
 			System.out.println("Error: " + e.code() + "," + e.getMessage());
 		}

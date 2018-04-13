@@ -8,6 +8,8 @@ import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 
+import static book.Constant.ZK_SERVER_ADD;
+
 // ZooKeeper API 删除节点，使用同步(sync)接口。
 public class Exist_API_Sync_Usage implements Watcher {
 
@@ -16,7 +18,7 @@ public class Exist_API_Sync_Usage implements Watcher {
     public static void main(String[] args) throws Exception {
 
     	String path = "/zk-book";
-    	zk = new ZooKeeper("domain1.book.zookeeper:2181", 
+    	zk = new ZooKeeper(ZK_SERVER_ADD,
 				5000, //
 				new Exist_API_Sync_Usage());
     	connectedSemaphore.await();
