@@ -10,6 +10,8 @@ import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
+import static book.Constant.ZK_SERVER_ADD;
+
 // ZooKeeper API 获取节点数据内容，使用异步(async)接口。
 public class GetData_API_ASync_Usage implements Watcher {
 
@@ -19,8 +21,8 @@ public class GetData_API_ASync_Usage implements Watcher {
     public static void main(String[] args) throws Exception {
 
     	String path = "/zk-book";
-    	zk = new ZooKeeper("domain1.book.zookeeper:2181", 
-				5000, //
+    	zk = new ZooKeeper(ZK_SERVER_ADD,
+				5000,
 				new GetData_API_ASync_Usage());
         connectedSemaphore.await();
         
@@ -32,6 +34,7 @@ public class GetData_API_ASync_Usage implements Watcher {
         
         Thread.sleep( Integer.MAX_VALUE );
     }
+    @Override
     public void process(WatchedEvent event) {
         if (KeeperState.SyncConnected == event.getState()) {
   	      if (EventType.None == event.getType() && null == event.getPath()) {
@@ -45,7 +48,8 @@ public class GetData_API_ASync_Usage implements Watcher {
        }
 }
 class IDataCallback implements AsyncCallback.DataCallback{
-	public void processResult(int rc, String path, Object ctx, byte[] data, Stat stat) {
+	@Override
+    public void processResult(int rc, String path, Object ctx, byte[] data, Stat stat) {
         System.out.println(rc + ", " + path + ", " + new String(data));
         System.out.println(stat.getCzxid()+","+
                   		   stat.getMzxid()+","+
