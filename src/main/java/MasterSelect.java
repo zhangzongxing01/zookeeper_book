@@ -38,7 +38,7 @@ public class MasterSelect implements Watcher {
      * “这个人死了”？ ————这个的意思就是他死了，对应的节点就会消失
      * 
      */
-    void getLock(String path, String data, CreateMode createMode) throws IOException, KeeperException,
+    private void getLock(String path, String data, CreateMode createMode) throws IOException, KeeperException,
             InterruptedException {
         if (zk == null) {
             zk = this.createSession("domain1.book.zookeeper:2181", 2000, this);
@@ -47,7 +47,7 @@ public class MasterSelect implements Watcher {
     }
 
     /** 开始盯着这个节点 */
-    void exists(String path) throws KeeperException, InterruptedException, IOException {
+    private void exists(String path) throws KeeperException, InterruptedException, IOException {
 
         if (zk == null) {
             zk = this.createSession("domain1.book.zookeeper:2181", 5000, this);

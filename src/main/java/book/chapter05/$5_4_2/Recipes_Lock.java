@@ -7,12 +7,14 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 
+import static book.Constant.ZK_SERVER_ADD;
+
 //使用Curator实现分布式锁功能
 public class Recipes_Lock {
 
 	static String lock_path = "/curator_recipes_lock_path";
     static CuratorFramework client = CuratorFrameworkFactory.builder()
-            .connectString("domain1.book.zookeeper:2181")
+            .connectString(ZK_SERVER_ADD)
             .retryPolicy(new ExponentialBackoffRetry(1000, 3)).build();
 	public static void main(String[] args) throws Exception {
 		client.start();
@@ -20,6 +22,7 @@ public class Recipes_Lock {
 		final CountDownLatch down = new CountDownLatch(1);
 		for(int i = 0; i < 30; i++){
 			new Thread(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						down.await();

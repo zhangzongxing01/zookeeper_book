@@ -8,11 +8,13 @@ import org.apache.curator.framework.recipes.cache.PathChildrenCacheListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
 
+import static book.Constant.ZK_SERVER_ADD;
+
 public class PathChildrenCache_Sample {
 
     static String path = "/zk-book";
     static CuratorFramework client = CuratorFrameworkFactory.builder()
-            .connectString("domain1.book.zookeeper:2181")
+            .connectString(ZK_SERVER_ADD)
             .retryPolicy(new ExponentialBackoffRetry(1000, 3))
             .sessionTimeoutMs(5000)
             .build();
@@ -21,16 +23,20 @@ public class PathChildrenCache_Sample {
 		PathChildrenCache cache = new PathChildrenCache(client, path, true);
 		cache.start(StartMode.POST_INITIALIZED_EVENT);
 		cache.getListenable().addListener(new PathChildrenCacheListener() {
-			public void childEvent(CuratorFramework client, 
-					               PathChildrenCacheEvent event) throws Exception {
+			@Override
+			public void childEvent(CuratorFramework client,
+								   PathChildrenCacheEvent event) throws Exception {
 				switch (event.getType()) {
 				case CHILD_ADDED:
+					System.out.println("CHILD_ADDED");
 					System.out.println("CHILD_ADDED," + event.getData().getPath());
 					break;
 				case CHILD_UPDATED:
+					System.out.println("CHILD_UPDATED");
 					System.out.println("CHILD_UPDATED," + event.getData().getPath());
 					break;
 				case CHILD_REMOVED:
+					System.out.println("CHILD_REMOVED," );
 					System.out.println("CHILD_REMOVED," + event.getData().getPath());
 					break;
 				default:
@@ -41,6 +47,14 @@ public class PathChildrenCache_Sample {
 		client.create().withMode(CreateMode.PERSISTENT).forPath(path);
 		Thread.sleep( 1000 );
 		client.create().withMode(CreateMode.PERSISTENT).forPath(path+"/c1");
+
+		Thread.sleep( 1000 );
+		client.create().withMode(CreateMode.PERSISTENT).forPath(path+"/c1/v2");
+
+
+		Thread.sleep( 1000 );
+		client.delete().forPath(path+"/c1/v2");
+
 		Thread.sleep( 1000 );
 		client.delete().forPath(path+"/c1");
 		Thread.sleep( 1000 );

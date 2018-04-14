@@ -9,6 +9,7 @@ public class Recipes_NoLock {
 		final CountDownLatch down = new CountDownLatch(1);
 		for(int i = 0; i < 10; i++){
 			new Thread(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						down.await();

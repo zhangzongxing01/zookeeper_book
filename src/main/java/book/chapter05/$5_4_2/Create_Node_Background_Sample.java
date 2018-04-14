@@ -10,13 +10,15 @@ import org.apache.curator.framework.api.CuratorEvent;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
 
+import static book.Constant.ZK_SERVER_ADD;
+
 //使用Curator的异步接口
 public class Create_Node_Background_Sample {
 
     static String path = "/zk-book";
 
     static CuratorFramework client = CuratorFrameworkFactory.builder()
-            .connectString("domain1.book.zookeeper:2181")
+            .connectString(ZK_SERVER_ADD)
             .sessionTimeoutMs(5000)
             .retryPolicy(new ExponentialBackoffRetry(1000, 3))
             .build();
@@ -30,7 +32,7 @@ public class Create_Node_Background_Sample {
         client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).inBackground(new BackgroundCallback() {
             @Override
             public void processResult(CuratorFramework client, CuratorEvent event) throws Exception {
-                System.out.println("event[code: " + event.getResultCode() + ", type: " + event.getType() + "]");
+                System.out.println("1event[code: " + event.getResultCode() + ", type: " + event.getType() + "]");
                 System.out.println("Thread of processResult: " + Thread.currentThread().getName());
                 semaphore.countDown();
             }
@@ -39,7 +41,7 @@ public class Create_Node_Background_Sample {
         client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).inBackground(new BackgroundCallback() {
             @Override
             public void processResult(CuratorFramework client, CuratorEvent event) throws Exception {
-                System.out.println("event[code: " + event.getResultCode() + ", type: " + event.getType() + "]");
+                System.out.println("2event[code: " + event.getResultCode() + ", type: " + event.getType() + "]");
                 System.out.println("Thread of processResult: " + Thread.currentThread().getName());
                 semaphore.countDown();
             }

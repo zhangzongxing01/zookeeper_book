@@ -4,11 +4,13 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
 
+import static book.Constant.ZK_SERVER_ADD;
+
 //使用Curator创建节点
 public class Create_Node_Sample {
     static String path = "/zk-book/c1";
     static CuratorFramework client = CuratorFrameworkFactory.builder()
-            .connectString("domain1.book.zookeeper:2181")
+            .connectString(ZK_SERVER_ADD)
             .sessionTimeoutMs(5000)
             .retryPolicy(new ExponentialBackoffRetry(1000, 3))
             .build();

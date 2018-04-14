@@ -5,12 +5,16 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 
-//使用Curator更新数据内容
+import static book.Constant.ZK_SERVER_ADD;
+
+/**
+ * 使用Curator更新数据内容
+ */
 public class Set_Data_Sample {
 
     static String path = "/zk-book";
     static CuratorFramework client = CuratorFrameworkFactory.builder()
-            .connectString("domain1.book.zookeeper:2181")
+            .connectString(ZK_SERVER_ADD)
             .sessionTimeoutMs(5000)
             .retryPolicy(new ExponentialBackoffRetry(1000, 3))
             .build();
@@ -22,11 +26,13 @@ public class Set_Data_Sample {
               .withMode(CreateMode.EPHEMERAL)
               .forPath(path, "init".getBytes());
         Stat stat = new Stat();
-        client.getData().storingStatIn(stat).forPath(path);
+        byte[] bytes = client.getData().storingStatIn(stat).forPath(path);
+        System.out.println(new String(bytes));
         System.out.println("Success set node for : " + path + ", new version: "
                 + client.setData().withVersion(stat.getVersion()).forPath(path).getVersion());
         try {
-            client.setData().withVersion(stat.getVersion()).forPath(path);
+            client.setData().forPath(path,"ff".getBytes());
+            System.out.println(new String(client.getData().storingStatIn(stat).forPath(path)));
         } catch (Exception e) {
             System.out.println("Fail set node due to " + e.getMessage());
         }
